@@ -48,7 +48,7 @@ async function run() {
         // await client.connect();
         // const ServicesCollation = client.db("serviceDB").collection("service");
         const database = client.db("assginmentDB");
-        const ServicesCollation = database.collection("assginment");
+        const AssignmentCollation = database.collection("assginment");
         try {
             app.post('/jwt', async(req, res) => {
                 const user = req.body;
@@ -78,8 +78,14 @@ async function run() {
             console.log(erroe)
         }
         app.get('/assignment', async(req, res) => {
-            const cours = ServicesCollation.find();
+            const cours = AssignmentCollation.find();
             const result = await cours.toArray();
+            res.send(result)
+        });
+        app.post('/assignment', async(req, res) => {
+            const assigment = req.body;
+            console.log(assigment)
+            const result = await AssignmentCollation.insertOne(assigment);
             res.send(result)
         });
         app.put('/assignment/:id', async(req, res) => {
@@ -96,7 +102,7 @@ async function run() {
                 }
             };
             console.log(id, data)
-            const result = await ServicesCollation.updateOne(quarys, update, options);
+            const result = await AssignmentCollation.updateOne(quarys, update, options);
             res.send(result)
             console.log(id, data)
         })
@@ -105,7 +111,7 @@ async function run() {
         app.delete('/assginment/:id', async(req, res) => {
             const id = req.params.id;
             const quary = { _id: new ObjectId(id) }
-            const result = await BookingCollation.deleteOne(quary);
+            const result = await AssignmentCollation.deleteOne(quary);
             res.send(result)
         })
 
