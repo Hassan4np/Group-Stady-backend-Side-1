@@ -78,7 +78,12 @@ async function run() {
             console.log(erroe)
         }
         app.get('/assignment', async(req, res) => {
-            const cours = AssignmentCollation.find();
+            const queryObj = {};
+            const level = req.query.level;
+            if (level) {
+                queryObj.level = level;
+            }
+            const cours = AssignmentCollation.find(queryObj);
             const result = await cours.toArray();
             res.send(result)
         });
