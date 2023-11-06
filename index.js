@@ -65,8 +65,8 @@ async function run() {
                     })
                     .send({ success: true })
             })
-        } catch (errro) {
-            console.log(errro)
+        } catch (error) {
+            console.log(error)
         }
         try {
             app.post('/logout', async(req, res) => {
@@ -74,8 +74,8 @@ async function run() {
                 console.log(user)
                 res.clearCookie('token', { maxAge: 0 }).send({ success: true })
             })
-        } catch (erroe) {
-            console.log(erroe)
+        } catch (error) {
+            console.log(error)
         }
         try {
             app.get('/assignment', async(req, res) => {
@@ -151,8 +151,9 @@ async function run() {
         try {
             app.get('/submitedata', async(req, res) => {
                 const sataus = req.query.status;
+                const email = req.query.email
                 console.log(sataus)
-                const quary = { status: sataus };
+                const quary = { status: sataus, useremail: email };
                 const options = {
                     projection: {
                         title: 1,
@@ -160,7 +161,8 @@ async function run() {
                         username: 1,
                         status: 1,
                         pdf: 1,
-                        text: 1
+                        text: 1,
+                        useremail: 1,
                     },
                 };
                 const cours = SubmitCollation.find(quary, options);
