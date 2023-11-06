@@ -27,20 +27,20 @@ const client = new MongoClient(uri, {
     }
 });
 
-const verifiedtoken = async(req, res, next) => {
-    const token = req.cookies.token;
-    console.log('value is token', token)
-    if (!token) {
-        return res.status(401).send({ message: 'unauthrazion' })
-    }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-            res.status(401).send({ messange: 'not ok auth' })
-        }
-        req.user = decoded;
-        next()
-    })
-}
+// const verifiedtoken = async(req, res, next) => {
+//     const token = req.cookies.token;
+//     console.log('value is token', token)
+//     if (!token) {
+//         return res.status(401).send({ message: 'unauthrazion' })
+//     }
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+//         if (err) {
+//             res.status(401).send({ messange: 'not ok auth' })
+//         }
+//         req.user = decoded;
+//         next()
+//     })
+// }
 
 async function run() {
     try {
@@ -49,6 +49,8 @@ async function run() {
         // const ServicesCollation = client.db("serviceDB").collection("service");
         const database = client.db("assginmentDB");
         const AssignmentCollation = database.collection("assginment");
+        const databasesubmit = client.db("assginmentDB");
+        const SubmitCollation = databasesubmit.collection("submited");
         try {
             app.post('/jwt', async(req, res) => {
                 const user = req.body;
@@ -101,6 +103,38 @@ async function run() {
             const result = await AssignmentCollation.insertOne(assigment);
             res.send(result)
         });
+        try {
+            app.post('/submitedata', async(req, res) => {
+                const data = req.body;
+                console.log(data)
+                result = await SubmitCollation.insertOne(data);
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        };
+        try {
+            app.get('/submitedata', async(req, res) => {
+                const sataus = req.query.status;
+                console.log(sataus)
+                const quary = { status: sataus };
+                const options = {
+                    projection: {
+                        title: 1,
+                        marks: 1,
+                        username: 1,
+                        status: 1,
+                    },
+                };
+
+                const cours = SubmitCollation.find(quary, options);
+
+                const result = await cours.toArray();
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        }
         app.put('/assignment/:id', async(req, res) => {
             const data = req.body;
             const id = req.params.id;
