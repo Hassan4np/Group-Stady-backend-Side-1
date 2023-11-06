@@ -104,20 +104,25 @@ async function run() {
         app.put('/assignment/:id', async(req, res) => {
             const data = req.body;
             const id = req.params.id;
-            const quarys = { _id: new ObjectId(id) };
+            const quarys = {
+                _id: new ObjectId(id),
+                email: data.email
+            };
             const options = { upsert: true };
             const update = {
                 $set: {
                     title: data.title,
-                    price: data.price,
+                    marks: data.marks,
                     img: data.img,
-                    description: data.description
+                    description: data.description,
+                    date: data.date,
+                    level: data.level
+
                 }
             };
             console.log(id, data)
             const result = await AssignmentCollation.updateOne(quarys, update, options);
             res.send(result)
-            console.log(id, data)
         })
 
 
