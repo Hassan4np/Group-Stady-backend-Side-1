@@ -87,6 +87,14 @@ async function run() {
             const result = await cours.toArray();
             res.send(result)
         });
+        app.get('/assignment/:id', async(req, res) => {
+            const id = req.params.id;
+            // const id = req.query.id
+            const cours = { _id: new ObjectId(id) }
+            const result = await AssignmentCollation.findOne(cours);
+            res.send(result)
+
+        })
         app.post('/assignment', async(req, res) => {
             const assigment = req.body;
             console.log(assigment)
@@ -113,9 +121,12 @@ async function run() {
         })
 
 
-        app.delete('/assginment/:id', async(req, res) => {
-            const id = req.params.id;
-            const quary = { _id: new ObjectId(id) }
+        app.delete('/assginment', async(req, res) => {
+            const id = req.query.id;
+            const useremail = req.query.email
+            console.log(id, useremail)
+
+            const quary = { _id: new ObjectId(id), email: useremail }
             const result = await AssignmentCollation.deleteOne(quary);
             res.send(result)
         })
