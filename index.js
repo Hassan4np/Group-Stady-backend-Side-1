@@ -27,26 +27,25 @@ const client = new MongoClient(uri, {
     }
 });
 
-// const verifiedtoken = async(req, res, next) => {
-//     const token = req.cookies.token;
-//     console.log('value is token', token)
-//     if (!token) {
-//         return res.status(401).send({ message: 'unauthrazion' })
-//     }
-//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-//         if (err) {
-//             res.status(401).send({ messange: 'not ok auth' })
-//         }
-//         req.user = decoded;
-//         next()
-//     })
-// }
+const verifiedtoken = async(req, res, next) => {
+    const token = req.cookies.token;
+    console.log('value is token', token)
+    if (!token) {
+        return res.status(401).send({ message: 'unauthrazion' })
+    }
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(401).send({ messange: 'not ok auth' })
+        }
+        req.user = decoded;
+        next()
+    })
+}
 
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
+        // Connect the client to the server(optional starting in v4 .7)
         // await client.connect();
-        // const ServicesCollation = client.db("serviceDB").collection("service");
         const database = client.db("assginmentDB");
         const AssignmentCollation = database.collection("assginment");
         const databasesubmit = client.db("assginmentDB");
@@ -106,7 +105,7 @@ async function run() {
             console.log(error)
         }
         try {
-            app.get('/assignment/:id', async(req, res) => {
+            app.get('/assignment/:id', verifiedtoken, async(req, res) => {
                 const id = req.params.id;
                 // const id = req.query.id
                 const cours = { _id: new ObjectId(id) }
@@ -117,7 +116,7 @@ async function run() {
             console.log(error)
         }
         try {
-            app.post('/assignment', async(req, res) => {
+            app.post('/assignment', verifiedtoken, async(req, res) => {
                 const assigment = req.body;
                 console.log(assigment)
                 const result = await AssignmentCollation.insertOne(assigment);
@@ -126,94 +125,12 @@ async function run() {
         } catch (error) {
             console.log(error)
         }
-
-
-        try {
-            app.post('/submitedata', async(req, res) => {
-                const data = req.body;
-                console.log(data)
-                result = await SubmitCollation.insertOne(data);
-                res.send(result)
-            })
-        } catch (error) {
-            console.log(error)
-        };
-        try {
-            app.put('/submitedata/:id', async(req, res) => {
-                const id = req.params.id;
-                const data = req.body;
-                console.log(id, data)
-                const quarys = {
-                    _id: new ObjectId(id),
-                };
-                const options = { upsert: true };
-                const update = {
-                    $set: {
-                        status: data.sataus,
-                        pdf: data.pdf,
-                        text: data.text,
-                        mainmark: data.mainmark,
-                        feedback: data.notes
-                    }
-                };
-                const result = await SubmitCollation.updateOne(quarys, update, options);
-                res.send(result)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-        try {
-            app.get('/submitedata', async(req, res) => {
-                const sataus = req.query.status;
-                const email = req.query.email
-                console.log(sataus)
-                const quary = { status: sataus, useremail: email };
-                const options = {
-                    projection: {
-                        title: 1,
-                        marks: 1,
-                        username: 1,
-                        status: 1,
-                        pdf: 1,
-                        text: 1,
-                        useremail: 1,
-                    },
-                };
-                const cours = SubmitCollation.find(quary, options);
-
-                const result = await cours.toArray();
-                res.send(result)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-        try {
-            app.get('/submitedata/:id', async(req, res) => {
-                const id = req.params.id;
-                // const id = req.query.id
-                console.log(id)
-                const cours = { _id: new ObjectId(id) }
-                const options = {
-                    projection: {
-                        title: 1,
-                        status: 1,
-                        pdf: 1,
-                        text: 1
-                    },
-                };
-                const result = await SubmitCollation.findOne(cours, options);
-                res.send(result)
-            })
-        } catch (error) {
-            console.log(error)
-        }
         try {
             app.put('/assignment/:id', async(req, res) => {
                 const data = req.body;
                 const id = req.params.id;
                 const quarys = {
-                    _id: new ObjectId(id),
-                    email: data.email
+                    _id: new ObjectId(id)
                 };
                 const options = { upsert: true };
                 const update = {
@@ -228,14 +145,97 @@ async function run() {
                 };
                 console.log(id, data)
                 const result = await AssignmentCollation.updateOne(quarys, update, options);
-                res.send(result)
+                return res.send(result)
             })
         } catch (error) {
             console.log(error)
         }
 
         try {
-            app.delete('/assginment', async(req, res) => {
+            app.post('/submitedata', verifiedtoken, async(req, res) => {
+                const data = req.body;
+                console.log(data)
+                result = await SubmitCollation.insertOne(data);
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        };
+        try {
+            app.put('/submitedata/:id', verifiedtoken, async(req, res) => {
+                const id = req.params.id;
+                const data = req.body;
+                console.log(id, data)
+                const quarys = {
+                    _id: new ObjectId(id),
+                };
+                const options = { upsert: true };
+                const update = {
+                    $set: {
+                        status: data.status,
+                        pdf: data.pdf,
+                        text: data.text,
+                        mainmark: data.mainmark,
+                        feedback: data.notes
+                    }
+                };
+                const result = await SubmitCollation.updateOne(quarys, update, options);
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        try {
+            app.get('/submitedata', verifiedtoken, async(req, res) => {
+                const sataus = req.query.status;
+                const email = req.query.email
+
+                const quary = { status: sataus, useremail: email };
+                const options = {
+                    projection: {
+                        title: 1,
+                        marks: 1,
+                        username: 1,
+                        status: 1,
+                        pdf: 1,
+                        text: 1,
+                        useremail: 1,
+                        mainmark: 1,
+                    },
+                };
+                const cours = SubmitCollation.find(quary, options);
+
+                const result = await cours.toArray();
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        try {
+            app.get('/submitedata/:id', verifiedtoken, async(req, res) => {
+                const id = req.params.id;
+                // const id = req.query.id
+                console.log(id)
+                const cours = { _id: new ObjectId(id) }
+                const options = {
+                    projection: {
+                        title: 1,
+                        status: 1,
+                        pdf: 1,
+                        text: 1,
+
+                    },
+                };
+                const result = await SubmitCollation.findOne(cours, options);
+                res.send(result)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
+
+        try {
+            app.delete('/assginment', verifiedtoken, async(req, res) => {
                 const id = req.query.id;
                 const useremail = req.query.email
                 console.log(id, useremail)
@@ -257,9 +257,8 @@ async function run() {
 }
 run().catch(console.dir);
 
-
 app.get('/', (req, res) => {
-    res.send('Hello Hassaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnnnnnnnnnnn')
+    res.send('Hello word')
 })
 
 app.listen(port, () => {
