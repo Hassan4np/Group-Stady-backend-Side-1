@@ -81,13 +81,27 @@ async function run() {
             app.get('/assignment', async(req, res) => {
                 const queryObj = {};
                 const level = req.query.level;
+                const page = parseInt(req.query.page);
+                const parpage = 9
                 if (level) {
                     queryObj.level = level;
                 }
-                const cours = AssignmentCollation.find(queryObj);
+                const cours = AssignmentCollation.find(queryObj).skip(page * parpage).limit(parpage);
                 const result = await cours.toArray();
-                res.send(result)
+                const count = await AssignmentCollation.estimatedDocumentCount();
+                res.send({
+                    result,
+                    count
+                })
             });
+        } catch (error) {
+            console.log(error)
+        }
+        try {
+            app.get('/assarmentCount', async(req, res) => {
+                const result = await AssignmentCollation.estimatedDocumentCount();
+                res.send(result)
+            })
         } catch (error) {
             console.log(error)
         }
@@ -219,8 +233,6 @@ async function run() {
         } catch (error) {
             console.log(error)
         }
-
-
 
         try {
             app.delete('/assginment', async(req, res) => {
