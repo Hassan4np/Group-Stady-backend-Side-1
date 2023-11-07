@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 
 //middle were data bancend get koror jonno.
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
     credentials: true
 }));
 app.use(express.json());
@@ -116,7 +116,7 @@ async function run() {
             console.log(error)
         }
         try {
-            app.post('/assignment', verifiedtoken, async(req, res) => {
+            app.post('/assignment', async(req, res) => {
                 const assigment = req.body;
                 console.log(assigment)
                 const result = await AssignmentCollation.insertOne(assigment);
