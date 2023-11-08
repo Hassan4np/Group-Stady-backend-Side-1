@@ -179,6 +179,7 @@ async function run() {
                         text: data.text,
                         mainmark: data.mainmark,
                         feedback: data.notes
+
                     }
                 };
                 const result = await SubmitCollation.updateOne(quarys, update, options);
@@ -203,6 +204,7 @@ async function run() {
                         text: 1,
                         useremail: 1,
                         mainmark: 1,
+                        feedback: 1,
                     },
                 };
                 const cours = SubmitCollation.find(quary, options);
@@ -225,6 +227,7 @@ async function run() {
                         status: 1,
                         pdf: 1,
                         text: 1,
+
 
                     },
                 };
