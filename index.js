@@ -10,6 +10,7 @@ const port = process.env.PORT || 5000;
 //middle were data bancend get koror jonno.
 app.use(cors({
     origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
+    // origin: ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 app.use(express.json());
@@ -28,20 +29,20 @@ const client = new MongoClient(uri, {
 });
 
 const verifiedtoken = async(req, res, next) => {
-    const token = req.cookies.token;
-    console.log('value is token', token)
-    if (!token) {
-        return res.status(401).send({ message: 'unauthrazion' })
-    }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-            res.status(401).send({ messange: 'not ok auth' })
+        const token = req.cookies.token;
+        console.log('value is token', token)
+        if (!token) {
+            return res.status(401).send({ message: 'unauthrazion' })
         }
-        req.user = decoded;
-        next()
-    })
-}
-
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                res.status(401).send({ messange: 'not ok auth' })
+            }
+            req.user = decoded;
+            next()
+        })
+    }
+    //https://group-stady-backend-side.vercel.app
 async function run() {
     try {
         // Connect the client to the server(optional starting in v4 .7)
@@ -59,7 +60,9 @@ async function run() {
                 })
                 res.cookie('token', token, {
                         httpOnly: true,
-                        secure: false,
+                        // secure: false,
+                        secure: true,
+                        sameSite: 'none'
 
                     })
                     .send({ success: true })
@@ -70,7 +73,6 @@ async function run() {
         try {
             app.post('/logout', async(req, res) => {
                 const user = req.body;
-                console.log(user)
                 res.clearCookie('token', { maxAge: 0 }).send({ success: true })
             })
         } catch (error) {
