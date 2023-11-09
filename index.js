@@ -29,22 +29,19 @@ const client = new MongoClient(uri, {
 });
 
 const verifiedtoken = async(req, res, next) => {
-        const token = req.cookies.token;
-        console.log('value is token', token)
-        if (!token) {
-            return res.status(401).send({ message: 'unauthrazion' })
-        }
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if (err) {
-                res.status(401).send({ messange: 'not ok auth' })
-            }
-            req.user = decoded;
-            next()
-        })
+    const token = req.cookies.token;
+    console.log('value is token', token)
+    if (!token) {
+        return res.status(401).send({ message: 'unauthrazion' })
     }
-    //Live Link: https: //auth-project-4064d.web.app
-    //Server - Side - Code: https: //github.com/Porgramming-Hero-web-course/b8a11-server-side-Hassan4np/tree/main
-    //Client - Side - Code: https: //github.com/Porgramming-Hero-web-course/b8a11-client-side-Hassan4np
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            res.status(401).send({ messange: 'not ok auth' })
+        }
+        req.user = decoded;
+        next()
+    })
+}
 
 
 
