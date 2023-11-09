@@ -42,7 +42,14 @@ const verifiedtoken = async(req, res, next) => {
             next()
         })
     }
-    //https://group-stady-backend-side.vercel.app
+    //Live Link: https: //auth-project-4064d.web.app
+    //Server - Side - Code: https: //github.com/Porgramming-Hero-web-course/b8a11-server-side-Hassan4np/tree/main
+    //Client - Side - Code: https: //github.com/Porgramming-Hero-web-course/b8a11-client-side-Hassan4np
+
+
+
+
+//https://group-stady-backend-side.vercel.app
 async function run() {
     try {
         // Connect the client to the server(optional starting in v4 .7)
@@ -58,12 +65,11 @@ async function run() {
                     expiresIn: '1h',
 
                 })
-                res.cookie('token', token, {
+                res
+                    .cookie('token', token, {
                         httpOnly: true,
-                        // secure: false,
-                        secure: true,
-                        sameSite: 'none'
-
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
                     })
                     .send({ success: true })
             })
@@ -73,7 +79,13 @@ async function run() {
         try {
             app.post('/logout', async(req, res) => {
                 const user = req.body;
-                res.clearCookie('token', { maxAge: 0 }).send({ success: true })
+                res
+                    .clearCookie('token', {
+                        maxAge: 0,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                    })
+                    .send({ success: true })
             })
         } catch (error) {
             console.log(error)
