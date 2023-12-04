@@ -45,8 +45,10 @@ const verifiedtoken = async(req, res, next) => {
 
 
 
-
-//https://group-stady-backend-side.vercel.app
+//backend
+// https://group-stady-backend-side.vercel.app
+//client side-
+// https://auth-project-4064d.web.app
 async function run() {
     try {
         // Connect the client to the server(optional starting in v4 .7)
@@ -172,6 +174,13 @@ async function run() {
         } catch (error) {
             console.log(error)
         };
+        app.delete('/submitedata/:id', async(req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: new ObjectId(id) };
+            const result = await SubmitCollation.deleteOne(query);
+            res.send(result)
+        })
         try {
             app.put('/submitedata/:id', verifiedtoken, async(req, res) => {
                 const id = req.params.id;
