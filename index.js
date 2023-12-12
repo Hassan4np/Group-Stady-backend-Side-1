@@ -9,8 +9,8 @@ const port = process.env.PORT || 5000;
 
 //middle were data bancend get koror jonno.
 app.use(cors({
-    // origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
+    // origin: ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 app.use(express.json());
