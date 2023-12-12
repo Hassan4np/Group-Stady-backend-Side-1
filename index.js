@@ -9,8 +9,8 @@ const port = process.env.PORT || 5000;
 
 //middle were data bancend get koror jonno.
 app.use(cors({
-    origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
-    // origin: ['http://localhost:5173', 'http://localhost:5174'],
+    // origin: ['https://auth-project-4064d.web.app', 'https://auth-project-4064d.firebaseapp.com'],
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 app.use(express.json());
@@ -29,26 +29,23 @@ const client = new MongoClient(uri, {
 });
 
 const verifiedtoken = async(req, res, next) => {
-    const token = req.cookies.token;
-    console.log('value is token', token)
-    if (!token) {
-        return res.status(401).send({ message: 'unauthrazion' })
-    }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-            res.status(401).send({ messange: 'not ok auth' })
+        const token = req.cookies.token;
+        console.log('value is token', token)
+        if (!token) {
+            return res.status(401).send({ message: 'unauthrazion' })
         }
-        req.user = decoded;
-        next()
-    })
-}
-
-
-
-//backend
-// https://group-stady-backend-side.vercel.app
-//client side-
-// https://auth-project-4064d.web.app
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                res.status(401).send({ messange: 'not ok auth' })
+            }
+            req.user = decoded;
+            next()
+        })
+    }
+    //backend
+    // https://group-stady-backend-side.vercel.app
+    //client side-
+    // https://auth-project-4064d.web.app
 async function run() {
     try {
         // Connect the client to the server(optional starting in v4 .7)
